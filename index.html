@@ -4,211 +4,310 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fritos C.A. - Ventas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FF6600; /* Naranja Fritos */
-            --secondary: #FFCC00; /* Amarillo */
+            --primary: #FF8C00; /* Naranja Fritos */
+            --secondary: #FFD700; /* Amarillo */
             --dark: #2d2d2d;
             --light: #f4f4f4;
             --white: #ffffff;
+            --success: #25D366; /* WhatsApp Green */
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--light); color: var(--dark); }
-        
-        /* Header & Nav */
-        header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; }
-        .logo { height: 50px; border-radius: 5px; }
-        .nav-links a { color: white; text-decoration: none; font-weight: bold; margin-left: 20px; font-size: 0.9rem; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
-        /* Catalogo */
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; }
+        body { background-color: var(--light); color: var(--dark); }
+
+        /* Navbar */
+        nav {
+            background: var(--white);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-container img { height: 50px; border-radius: 50%; }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            margin-left: 20px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(rgba(255,140,0,0.1), rgba(255,215,0,0.1));
+        }
+
+        /* Menu Grid */
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
         .product-card:hover { transform: translateY(-5px); }
-        .price { font-size: 1.2rem; color: var(--primary); font-weight: bold; margin: 10px 0; }
-        .btn-add { background: var(--secondary); border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        /* Modal Pedido */
-        #modal-confirm { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 2rem; border-radius: 15px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
-        .tasa-box { background: #e3f2fd; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; border-left: 5px solid #2196f3; }
+        .product-card h3 { color: var(--primary); margin: 10px 0; }
+        .product-card .price { font-weight: 700; font-size: 1.2rem; display: block; margin-bottom: 10px; }
         
-        .footer-info { text-align: center; padding: 2rem; font-size: 0.8rem; color: #666; }
-        .badge-qty { background: red; color: white; padding: 2px 6px; border-radius: 50%; font-size: 10px; vertical-align: top; }
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        /* Modal / Confirmación */
+        #orderModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        
+        .tasa-box {
+            background: #fff8e1;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px dashed var(--primary);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .btn-whatsapp {
+            background: var(--success);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+
+        /* Floating Cart */
+        .cart-float {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
 
+<nav>
+    <div class="logo-container">
+        <img src="logo.jpg" alt="Fritos Logo">
+        <strong>Fritos C.A.</strong>
+    </div>
+    <div class="nav-links">
+        <a href="#productos">Productos</a>
+        <a href="https://wa.me/584122525407" target="_blank">Contacto</a>
+        <a href="javascript:void(0)" onclick="showAbout()">Acerca de</a>
+    </div>
+</nav>
+
 <header>
-    <nav>
-        <div style="display: flex; align-items: center;">
-            <img src="logo.jpg" alt="Logo Fritos" class="logo">
-            <span style="margin-left: 10px; font-size: 1.2rem; font-weight: bold;">Fritos C.A.</span>
-        </div>
-        <div class="nav-links">
-            <a href="javascript:void(0)" onclick="toggleAcerca()">Acerca de</a>
-            <a href="javascript:void(0)" onclick="verPedido()" style="background: var(--dark); padding: 8px 15px; border-radius: 20px;">
-                🛒 Carrito <span id="cart-count" class="badge-qty">0</span>
-            </a>
-        </div>
-    </nav>
+    <h1>Bienvenidos a Fritos C.A.</h1>
+    <p>¡Sabor que cruje! Pide ahora por WhatsApp</p>
 </header>
 
 <div class="container">
-    <div id="tasa-display" style="text-align: right; margin-bottom: 10px; font-weight: bold;">Cargando tasa BCV...</div>
-    <div class="menu-grid" id="menu-container">
-        </div>
-</div>
-
-<div id="modal-confirm">
-    <div class="modal-content">
-        <h3>Confirmar Pedido</h3>
-        <div id="tasa-info-modal" class="tasa-box"></div>
-        <div id="lista-pedido"></div>
-        <hr>
-        <div id="total-pedido" style="font-weight: bold; font-size: 1.1rem;"></div>
-        <br>
-        <button class="btn-add" style="background: #25D366; color: white;" onclick="enviarWhatsApp()">Enviar a WhatsApp</button>
-        <button class="btn-add" style="background: #ccc; margin-top: 10px;" onclick="cerrarModal()">Seguir Comprando</button>
+    <div id="products-grid" class="products-grid">
+        <p>Cargando productos del menú...</p>
     </div>
 </div>
 
-<div id="modal-acerca" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; color: white; padding: 50px;">
-    <h2>Información del Desarrollador</h2>
-    <p><strong>Antonio Itriago</strong></p>
-    <p>Analista, Diseñador y Desarrollador de Sistemas de Información Computarizados.</p>
-    <p>Contacto: <a href="https://wa.me/584122525407" style="color: var(--secondary);">wa.me/584122525407</a></p>
-    <button onclick="toggleAcerca()">Cerrar</button>
+<div class="cart-float" onclick="openOrder()">
+    🛒 Ver Pedido (<span id="cart-count">0</span>)
+</div>
+
+<div id="orderModal">
+    <div class="modal-content">
+        <h2>Confirmar tu Pedido</h2>
+        <div id="order-list" style="margin-top: 20px;"></div>
+        
+        <div id="tasa-info" class="tasa-box">
+            Consultando tasa BCV...
+        </div>
+
+        <div id="totals" style="font-weight: 700; font-size: 1.1rem; text-align: right; margin-top: 15px;">
+            </div>
+
+        <a href="#" id="sendWhatsapp" class="btn-whatsapp">Confirmar y enviar WhatsApp</a>
+        <button onclick="closeOrder()" style="background:none; border:none; color:grey; width:100%; margin-top:10px; cursor:pointer;">Seguir comprando</button>
+    </div>
 </div>
 
 <script>
-    // --- CONFIGURACIÓN Y TASA ---
-    const CONFIG = {
-        API: { BCV_URL: 'https://pydolarve.org/api/v1/dollar?page=bcv' }, // API sugerida para obtener el dato
-        KEY_LAST_BCV: 'last_bcv_rate',
-        SHEET_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsTRhoswf3zopWO5PEusQsYdYglnUlWTX9HzFIvewpy4vED9fQbs9Z0V3EdQ-AGMGLlpmcs_LL_cP3/pub?gid=0&single=true&output=tsv',
-        WHATSAPP: '584122525407'
-    };
+    // --- CONFIGURACIÓN ---
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsTRhoswf3zopWO5PEusQsYdYglnUlWTX9HzFIvewpy4vED9fQbs9Z0V3EdQ-AGMGLlpmcs_LL_cP3/pub?gid=0&single=true&output=tsv';
+    const WHATSAPP_NUMBER = '584122525407';
+    const BCV_API_URL = 'https://ve.dolarapi.com/v1/dolares/oficial'; // API pública recomendada para BCV
+    
+    let products = [];
+    let cart = {};
+    let currentTasa = 0;
 
-    let tasaActual = 0;
-    let productos = [];
-    let carrito = [];
-
+    // --- LÓGICA DE TASA BCV (Integrada) ---
     async function obtenerTasaBCV() {
         try {
-            // Nota: En un entorno real, fetch a BCV directo suele dar CORS. 
-            // Se usa un proxy o se asume que la URL de CONFIG funciona.
-            const response = await fetch(CONFIG.API.BCV_URL);
+            const response = await fetch(BCV_API_URL);
             const data = await response.json();
-            tasaActual = data.monitors.bcv.price || data.promedio;
-            localStorage.setItem(CONFIG.KEY_LAST_BCV, tasaActual);
-        } catch (e) {
-            tasaActual = parseFloat(localStorage.getItem(CONFIG.KEY_LAST_BCV)) || 0;
+            const tasa = data.promedio;
+            localStorage.setItem('last_bcv', tasa);
+            console.log("Tasa BCV:", tasa);
+            return tasa;
+        } catch (error) {
+            console.error("Error BCV, usando respaldo");
+            return parseFloat(localStorage.getItem('last_bcv')) || 0;
         }
-        document.getElementById('tasa-display').innerText = `Tasa BCV: ${tasaActual.toFixed(2)} Bs.`;
     }
 
-    // --- CARGA DE DATOS DESDE GOOGLE SHEETS ---
-    async function cargarProductos() {
-        const res = await fetch(CONFIG.SHEET_URL);
-        const data = await res.text();
-        const filas = data.split('\n').slice(1); // Saltar cabecera
-        
-        productos = filas.map(fila => {
-            const [id, name, price, currency, description, category] = fila.split('\t');
-            return { id, name, price: parseFloat(price), currency, description, category };
-        }).filter(p => p.id);
+    // --- CARGAR PRODUCTOS ---
+    async function loadProducts() {
+        try {
+            const response = await fetch(SHEET_URL);
+            const data = await response.text();
+            const rows = data.split('\n').slice(1); // Ignorar encabezado
+            
+            products = rows.map(row => {
+                const [id, name, price, currency, description, category] = row.split('\t');
+                return { id, name, price: parseFloat(price), currency, description, category };
+            }).filter(p => p.name);
 
-        renderProductos();
+            renderProducts();
+        } catch (e) {
+            document.getElementById('products-grid').innerHTML = "Error al cargar el menú.";
+        }
     }
 
-    function renderProductos() {
-        const container = document.getElementById('menu-container');
-        container.innerHTML = productos.map(p => `
+    function renderProducts() {
+        const grid = document.getElementById('products-grid');
+        grid.innerHTML = products.map(p => `
             <div class="product-card">
                 <h3>${p.name}</h3>
-                <p style="font-size: 0.8rem; color: #666;">${p.description}</p>
-                <div class="price">$${p.price.toFixed(2)}</div>
-                <button class="btn-add" onclick="agregarAlCarrito('${p.id}')">Agregar</button>
+                <p style="font-size: 0.8rem; color: #666; height: 40px;">${p.description || ''}</p>
+                <span class="price">$${p.price.toFixed(2)}</span>
+                <button class="btn-add" onclick="addToCart('${p.id}')">Agregar al Carrito</button>
             </div>
         `).join('');
     }
 
-    // --- LÓGICA DEL CARRITO ---
-    function agregarAlCarrito(id) {
-        const prod = productos.find(p => p.id === id);
-        const item = carrito.find(i => i.id === id);
-        if(item) { item.cantidad++; } else { carrito.push({...prod, cantidad: 1}); }
-        actualizarBadge();
+    // --- CARRITO ---
+    function addToCart(id) {
+        const product = products.find(p => p.id === id);
+        if (!cart[id]) {
+            cart[id] = { ...product, qty: 1 };
+        } else {
+            cart[id].qty += 1;
+        }
+        updateCartCount();
     }
 
-    function actualizarBadge() {
-        const total = carrito.reduce((acc, cur) => acc + cur.cantidad, 0);
-        document.getElementById('cart-count').innerText = total;
+    function updateCartCount() {
+        const count = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+        document.getElementById('cart-count').innerText = count;
     }
 
-    function verPedido() {
-        if(carrito.length === 0) return alert("El carrito está vacío");
-        const modal = document.getElementById('modal-confirm');
-        const lista = document.getElementById('lista-pedido');
-        const tasaInfo = document.getElementById('tasa-info-modal');
+    // --- MODAL Y WHATSAPP ---
+    async function openOrder() {
+        if (Object.keys(cart).length === 0) return alert("El carrito está vacío");
         
-        tasaInfo.innerText = `Tasa del día: 1 USD = ${tasaActual} Bs.`;
+        document.getElementById('orderModal').style.display = 'flex';
         
-        let html = "<ul>";
+        // Actualizar tasa al abrir confirmación
+        currentTasa = await obtenerTasaBCV();
+        document.getElementById('tasa-info').innerText = `Tasa del día (BCV): ${currentTasa.toFixed(2)} Bs.`;
+
         let totalUSD = 0;
-        
-        carrito.forEach(item => {
-            const subtotal = item.price * item.cantidad;
+        let listHTML = '';
+        let wsMessage = 'Hola Fritos C.A.! Mi pedido es:\n\n';
+
+        Object.values(cart).forEach(item => {
+            const subtotal = item.price * item.qty;
             totalUSD += subtotal;
-            html += `<li>${item.cantidad}x ${item.name} - $${subtotal.toFixed(2)}</li>`;
+            listHTML += `
+                <div class="summary-item">
+                    <span>${item.qty}x ${item.name}</span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </div>`;
+            wsMessage += `• ${item.qty}x ${item.name} ($${subtotal.toFixed(2)})\n`;
         });
-        html += "</ul>";
+
+        const totalBS = totalUSD * currentTasa;
         
-        const totalBS = totalUSD * tasaActual;
-        
-        lista.innerHTML = html;
-        document.getElementById('total-pedido').innerHTML = `
-            Total USD: $${totalUSD.toFixed(2)}<br>
-            Total Bs: ${totalBS.toFixed(2)} Bs.
+        document.getElementById('order-list').innerHTML = listHTML;
+        document.getElementById('totals').innerHTML = `
+            TOTAL USD: $${totalUSD.toFixed(2)}<br>
+            TOTAL BS: ${totalBS.toFixed(2)} Bs.
         `;
+
+        wsMessage += `\n*Total a pagar:* $${totalUSD.toFixed(2)} / ${totalBS.toFixed(2)} Bs.\n(Tasa: ${currentTasa} Bs.)`;
         
-        modal.style.display = 'flex';
+        document.getElementById('sendWhatsapp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(wsMessage)}`;
     }
 
-    function enviarWhatsApp() {
-        let mensaje = "¡Hola Fritos C.A.! Quisiera hacer el siguiente pedido:\n\n";
-        let totalUSD = 0;
-        
-        carrito.forEach(item => {
-            const sub = item.price * item.cantidad;
-            totalUSD += sub;
-            mensaje += `- ${item.cantidad}x ${item.name} ($${sub.toFixed(2)})\n`;
-        });
-        
-        const totalBS = totalUSD * tasaActual;
-        mensaje += `\n*Total a pagar:* $${totalUSD.toFixed(2)} / ${totalBS.toFixed(2)} Bs.`;
-        mensaje += `\n(Tasa BCV: ${tasaActual} Bs.)`;
-
-        const url = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
-        window.open(url, '_blank');
-        carrito = [];
-        actualizarBadge();
-        cerrarModal();
+    function closeOrder() {
+        document.getElementById('orderModal').style.display = 'none';
     }
 
-    function cerrarModal() { document.getElementById('modal-confirm').style.display = 'none'; }
-    function toggleAcerca() { 
-        const m = document.getElementById('modal-acerca');
-        m.style.display = m.style.display === 'none' ? 'block' : 'none';
+    function showAbout() {
+        alert("Desarrollado por:\nAntonio Itriago\nAnalista, Diseñador y Desarrollador de Sistemas de Información Computarizados.\nContacto: wa.me/584122525407");
     }
 
-    // Inicialización
-    window.onload = () => {
-        obtenerTasaBCV();
-        cargarProductos();
-    };
+    // Inicializar
+    loadProducts();
 </script>
 
 </body>
